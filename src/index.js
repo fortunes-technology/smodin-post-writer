@@ -22,6 +22,7 @@ const networkInterfaceWithSubscriptions = addGraphQLSubscriptions(
     networkInterface,
     wsClient
 )
+// Comment
 networkInterface.use([{
     applyMiddleware(req, next) {
         if (!req.options.headers) {
