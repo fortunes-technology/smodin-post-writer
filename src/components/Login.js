@@ -57,7 +57,6 @@ class Login extends Component {
                         {this.state.login ? 'need to create an account?' : 'already have an account?'}
                     </div>
                 </div>
-                <button onClick={(e)=>this.props.addAllDefaultSocialPostsQuery()}>addAllDefaultSocialPostsQuery</button>
             </div>
         )
     }
@@ -86,20 +85,11 @@ class Login extends Component {
             const token = result.data.signinUser.token
             this._saveUserData(id, token)
             const defaultSocialPostsQuery = this.props.allDefaultSocialPostsQuery
-            const defaultSocialPostsArray = defaultSocialPostsQuery.allDefaultSocialPosts.map(defaultSocialPost => {
-                const userId = localStorage.getItem(GC_USER_ID)
-                const industriesIds = defaultSocialPost.industries.map(industry => {return '\"'+industry.id+'\"'})
-                const returnValue = '{id default message industries {id}}'
-                const createSocialPostUnit = defaultSocialPost.id+': createSocialPost(userId:\"'+userId+'\",message:\"'+defaultSocialPost.message+'\", industriesIds:['+industriesIds+'])'+returnValue
-                return createSocialPostUnit
-            })
-            //****** try to get a map of posts with known IDs and such to work first
-            const userId = 'cj9pu7kwv1aoe0187vlnvqbew'
-            this.props.addAllDefaultSocialPostsOneByOneMutation({ variables: { userId: userId, industriesIds: [], message: "ok"}})
+            const defaultParametersQuery = this.props.allDefaultParametersQuery
+            const defaultIndustriesQuery = this.props.allDefaultIndustriesQuery
             defaultSocialPostsQuery.allDefaultSocialPosts.map(defaultSocialPost => {
                 const userId = localStorage.getItem(GC_USER_ID)
                 const industriesIds = defaultSocialPost.industries.map(industry => {return industry.id})
-                console.log(this.props)
                 this.props.addAllDefaultSocialPostsOneByOneMutation({
                     variables: {
                         userId: userId,
@@ -108,8 +98,30 @@ class Login extends Component {
                     }
                 })
             })
+            defaultParametersQuery.allDefaultParameters.map(defaultParameter => {
+                const userId = localStorage.getItem(GC_USER_ID)
+                const industriesIds = defaultParameter.industries.map(industry => {return industry.id})
+                this.props.addAllDefaultParametersOneByOneMutation({
+                    variables: {
+                        userId: userId,
+                        industriesIds: industriesIds,
+                        default: true,
+                        param: defaultParameter.param,
+                        response: defaultParameter.response
+                    }
+                })
+            })
+            defaultIndustriesQuery.allIndustries.map(defaultIndustry => {
+                const userId = localStorage.getItem(GC_USER_ID)
+                this.props.addAllDefaultIndustriesOneByOneMutation({
+                    variables: {
+                        userId: userId,
+                        industryId: defaultIndustry.id
+                    }
+                })
+            })
         }
-        //this.props.history.push(`/`)
+        this.props.history.push(`/`)
     }
 
     _saveUserData = (id, token) => {
@@ -118,7 +130,6 @@ class Login extends Component {
     }
 
 }
-console.log(this.state)
 const CREATE_USER_MUTATION = gql`
   mutation CreateUserMutation($name: String!, $email: String!, $password: String!) {
     createUser(
@@ -148,28 +159,22 @@ const ALL_DEFAULT_SOCIAL_POSTS_QUERY = gql`
   query AllSocialPostsQuery {
     allDefaultSocialPosts {
           id
-          default
           message
           industries {id}
         }}`
-const ADD_ALL_DEFAULT_SOCIAL_POSTS_MUTATION = gql`
-  mutation AddAllDefaultSocialPostsMutation {
-    cj9ok4zco01xx0119ebpbadvm: createSocialPost(
-    userId: "cj8chwezmb3gr01805oyo0gf1", 
-    message: "Charmander", 
-    industriesIds: ["cj97jd2670t6501027go4pm46","cj8cgj28h0nje01953vt0k8cv"]) {
-    id default message industries {id}
-  }
-
-  cj9ok4p5801xn0119w0dj4vej: createSocialPost(
-    userId: "cj8chwezmb3gr01805oyo0gf1", 
-    message: "Charmander", 
-    industriesIds: ["cj97jd2670t6501027go4pm46","cj8cgj28h0nje01953vt0k8cv"]) {
-    id
-    default
-    message
-	}
-    }`
+const ALL_DEFAULT_PARAMETERS_QUERY = gql`
+  query AllDefaultParametersQuery {
+    allDefaultParameters {
+          id
+          param
+          response
+          industries {id}
+        }}`
+const ALL_DEFAULT_INDUSTRIES_QUERY = gql`
+  query AllDefaultIndustriesQuery {
+    allIndustries ( filter: { default: true }){
+          id
+        }}`
 const ADD_ALL_DEFAULT_SOCIAL_POSTS_ONE_BY_ONE_MUTATION = gql`
   mutation AddAllDefaultSocialPostsOneByOneMutation(
         $userId: ID!, $industriesIds: [ID!], $message: String!){
@@ -178,6 +183,19 @@ const ADD_ALL_DEFAULT_SOCIAL_POSTS_ONE_BY_ONE_MUTATION = gql`
     id default message industries {id}
   }
 }`
+const ADD_ALL_DEFAULT_PARAMETERS_ONE_BY_ONE_MUTATION = gql`
+  mutation AddAllDefaultParametersOneByOneMutation(
+        $userId: ID!, $industriesIds: [ID!], $param: String!, $response: String!){
+    createParameter(userId: $userId, param: $param, response: $response, 
+    industriesIds: $industriesIds) {
+    id default param response industries {id}
+  }
+}`
+const ADD_ALL_DEFAULT_INDUSTRIES_ONE_BY_ONE_MUTATION = gql`
+    mutation UpdateUserIndustries($industryId: ID!, $userId: ID!){
+        addToUserIndustries(usersUserId: $userId, industriesIndustryId: $industryId){
+            industriesIndustry {id}
+        }}`
 const SIGNIN_USER_MUTATION = gql`
   mutation SigninUserMutation($email: String!, $password: String!) {
     signinUser(email: {
@@ -191,29 +209,13 @@ const SIGNIN_USER_MUTATION = gql`
     }
   }
 `
-ADD_ALL_DEFAULT_SOCIAL_POSTS_MUTATION
 export default compose(
     graphql(ALL_DEFAULT_SOCIAL_POSTS_QUERY, { name: 'allDefaultSocialPostsQuery'}),
+    graphql(ALL_DEFAULT_PARAMETERS_QUERY, { name: 'allDefaultParametersQuery'}),
+    graphql(ALL_DEFAULT_INDUSTRIES_QUERY, { name: 'allDefaultIndustriesQuery'}),
     graphql(ADD_ALL_DEFAULT_SOCIAL_POSTS_ONE_BY_ONE_MUTATION, { name: 'addAllDefaultSocialPostsOneByOneMutation'}),
+    graphql(ADD_ALL_DEFAULT_PARAMETERS_ONE_BY_ONE_MUTATION, { name: 'addAllDefaultParametersOneByOneMutation'}),
+    graphql(ADD_ALL_DEFAULT_INDUSTRIES_ONE_BY_ONE_MUTATION, { name: 'addAllDefaultIndustriesOneByOneMutation'}),
     graphql(CREATE_USER_MUTATION, { name: 'createUserMutation' }),
     graphql(SIGNIN_USER_MUTATION, { name: 'signinUserMutation' })
 )(Login)
-/*
-mutation {
-  cj9ok4zco01xx0119ebpbadvm: createSocialPost(
-    userId: "cj8chwezmb3gr01805oyo0gf1",
-    message: "Charmander",
-    industriesIds: ["cj97jd2670t6501027go4pm46","cj8cgj28h0nje01953vt0k8cv"]) {
-    id default message industries {id}
-  }
-
-  cj9ok4p5801xn0119w0dj4vej: createSocialPost(
-    userId: "cj8chwezmb3gr01805oyo0gf1",
-    message: "Charmander",
-    industriesIds: ["cj97jd2670t6501027go4pm46","cj8cgj28h0nje01953vt0k8cv"]) {
-    id
-    default
-    message
-	}
-}
- */

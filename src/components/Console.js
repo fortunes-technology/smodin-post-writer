@@ -1,6 +1,4 @@
 import React, { Component } from 'react'
-import { graphql, gql, compose } from 'react-apollo'
-import { GC_USER_ID } from '../constants'
 import ParameterList from './ParameterList'
 import SocialPostList from './SocialPostList'
 import IndustryList from './IndustryList'
@@ -9,10 +7,10 @@ import ParameterAndPostSearch from './ParameterAndPostSearch'
 class Console extends Component {
     constructor(props) {
         super(props)
-        const primaryIndustry = 'cj97jd2670t6501027go4pm46'
-        const primaryIndustryId = 'Generic'
+        const primaryIndustryId = 'cj97jd2670t6501027go4pm46'
+        const primaryIndustry = 'Generic'
         const defaultSearchText = ''
-        const defaultTab = 'posts'
+        const defaultTab = 'parameters'
         this.state = {
             selectedIndustryId: primaryIndustryId,
             selectedIndustry: primaryIndustry,

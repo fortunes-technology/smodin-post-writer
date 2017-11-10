@@ -24,17 +24,48 @@ class IndustryList extends Component {
                 </div>
             )
         }
-        if (this.props.allIndustriesQuery && this.props.allIndustriesQuery.loading) {
+        const IndustryArrayMap = () => {
+            if (this.props.allIndustriesQuery && this.props.allIndustriesQuery.loading) {
+                return (
+                    <div>
+                        {(this.state.selectedIndustryId === 'cj97jd2670t6501027go4pm46') ?
+                        <div>
+                            <hr className='center w85'></hr>
+                            <h4
+                                href='#'
+                                className='industryoption-selected tc mb2 ml1 mt2'>Generic</h4>
+                        </div> : null}
+                    </div>
+                )
+            }
+            if (this.props.allIndustriesQuery && this.props.allIndustriesQuery.error) {
+                return (
+                    <div>
+                        <hr className='center w85'></hr>
+                        <h4
+                            href='#'
+                            className='industryoption smodin-red tc mb2 ml1 mt2'>Error!</h4>
+                    </div>
+                )
+            }
             return (
                 <div>
-                    Loading...
-                </div>
-            )
-        }
-        if (this.props.allIndustriesQuery && this.props.allIndustriesQuery.error) {
-            return (
-                <div>
-                    {this.props.allIndustriesQuery.error}
+                    {this.props.allIndustriesQuery.allIndustries.map(industry => (
+                        (this.state.selectedIndustryId === industry.id) ?
+                        <div key={industry.id}>
+                            <hr className='center w85'></hr>
+                            <h4
+                                href='#'
+                                className='industryoption-selected tc mb2 ml1 mt2'>{industry.industry}</h4>
+                        </div>
+                        :<div key={industry.id}>
+                            <hr className='center w85'></hr>
+                            <h4
+                                href='#'
+                                className='industryoption tc mb2 ml1 mt2 pt0 pb0 dark-gray'
+                                onClick={() => this._sendIndustryToParent(industry.id, industry.industry)}>{industry.industry}</h4>
+                            </div>
+                    ))}
                 </div>
             )
         }
@@ -42,22 +73,7 @@ class IndustryList extends Component {
             <div>
                 <div>
                     <h3 className='tc mb2 ml1 mt2 dark-gray'>Industries</h3>
-                {this.props.allIndustriesQuery.allIndustries.map(industry => (
-                    (this.state.selectedIndustryId === industry.id) ?
-                    <div key={industry.id}>
-                        <hr className='center w85'></hr>
-                        <h4
-                            href='#'
-                            className='industryoption-selected tc mb2 ml1 mt2'>{industry.industry}</h4>
-                    </div>
-                    :<div key={industry.id}>
-                        <hr className='center w85'></hr>
-                        <h4
-                            href='#'
-                            className='industryoption tc mb2 ml1 mt2 pt0 pb0 dark-gray'
-                            onClick={() => this._sendIndustryToParent(industry.id, industry.industry)}>{industry.industry}</h4>
-                </div>
-                ))}
+                    <IndustryArrayMap />
                     <hr className='center w85'></hr>
                         <Link to='/industries' className='fw6 dark-gray no-underline'>
                             <div className='industryoption tc mb2 ml1 mt2 '>

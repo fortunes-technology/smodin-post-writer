@@ -1,8 +1,5 @@
 import React, { Component } from 'react'
 import { gql, graphql, compose } from 'react-apollo'
-import { findAllParametersInString } from '../utils'
-import SocialPostWithCSS from './SocialPostWithCSS'
-import TextareaAutosize from 'react-autosize-textarea'
 
 class SocialPostBox extends Component {
     constructor(props) {

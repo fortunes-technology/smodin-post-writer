@@ -106,7 +106,6 @@ class IndustriesPage extends Component {
                 userId: userId
             },
             update: (store) => {
-                const industryId = industryId
                 const userId = localStorage.getItem(GC_USER_ID)
                 const data = store.readQuery({query: ALL_INDUSTRIES_QUERY, variables: { id: userId }})
                 const removedIndustryIndex = data.allIndustries.findIndex((industry) => (industry.id === industryId))
@@ -127,7 +126,7 @@ const ALL_INDUSTRIES_NO_FILTER_QUERY = gql`
           industry
         }}`
 const ADD_INDUSTRY_MUTATION = gql`
-    mutation UpdateSocialPost($industryId: ID!, $userId: ID!){
+    mutation UpdateUserIndustries($industryId: ID!, $userId: ID!){
         addToUserIndustries(usersUserId: $userId, industriesIndustryId: $industryId){
             industriesIndustry {
                 id

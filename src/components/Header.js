@@ -12,7 +12,7 @@ class Header extends Component {
             <div className='justify-between' id='horizontalheader'>
                 <div className='black pt1-vert'>
                     {this.props.userSettingsQuery && ( !this.props.userSettingsQuery.loading && !this.props.userSettingsQuery.error) ?
-                        <div className='fw7 mr1 f3 ml2'>Welcome {this.props.userSettingsQuery.User.name}</div>
+                        <div className='fw7 mr1 f3 ml2'>Welcome {(this.props.userSettingsQuery.User)? this.props.userSettingsQuery.User.name: null}</div>
                     : <div className='fw7 mr1 f3 ml2'>Welcome</div>}
                 </div>
                 <div className='flex pt1-vert mr2'>
