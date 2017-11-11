@@ -97,6 +97,7 @@ class Login extends Component {
                         message: defaultSocialPost.message
                     }
                 })
+                return null
             })
             defaultParametersQuery.allDefaultParameters.map(defaultParameter => {
                 const userId = localStorage.getItem(GC_USER_ID)
@@ -110,6 +111,7 @@ class Login extends Component {
                         response: defaultParameter.response
                     }
                 })
+                return null
             })
             defaultIndustriesQuery.allIndustries.map(defaultIndustry => {
                 const userId = localStorage.getItem(GC_USER_ID)
@@ -119,6 +121,7 @@ class Login extends Component {
                         industryId: defaultIndustry.id
                     }
                 })
+                return null
             })
         }
         this.props.history.push(`/`)
@@ -185,8 +188,8 @@ const ADD_ALL_DEFAULT_SOCIAL_POSTS_ONE_BY_ONE_MUTATION = gql`
 }`
 const ADD_ALL_DEFAULT_PARAMETERS_ONE_BY_ONE_MUTATION = gql`
   mutation AddAllDefaultParametersOneByOneMutation(
-        $userId: ID!, $industriesIds: [ID!], $param: String!, $response: String!){
-    createParameter(userId: $userId, param: $param, response: $response, 
+        $userId: ID!, $industriesIds: [ID!], $param: String!, $response: String!, $default: Boolean!){
+    createParameter(userId: $userId, param: $param, response: $response, default: $default,
     industriesIds: $industriesIds) {
     id default param response industries {id}
   }

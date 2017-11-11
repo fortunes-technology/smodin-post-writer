@@ -58,7 +58,8 @@ class ParameterList extends Component {
                                 key={parameter.id}
                                 parameter={parameter}
                                 index={index}
-                                deleteParameter={this._handleDeleteParameter}/>
+                                deleteParameter={this._handleDeleteParameter}
+                                updateParameter={this._handleUpdateParameter}/>
                     ))}
                     <tbody id='parameterstable-tr'>
                         <tr>
@@ -95,41 +96,50 @@ class ParameterList extends Component {
         )
     }
     _handleDeleteParameter =  (id) => {
-        console.log('deleting parameter ID: ' + id)
         this.props.deletedParameterMutation({
             variables: {
                 id: id
             },
             update: (store) => {
                 const userId = localStorage.getItem(GC_USER_ID)
-                const data = store.readQuery({query: ALL_PARAMETERS_QUERY, variables: { id: userId }})
+                const industryId = this.props.selectedIndustryId
+                const data = store.readQuery({query: ALL_PARAMETERS_QUERY, variables: { id: userId, industryId: industryId }})
                 const deletedParameterIndex = data.allParameters.findIndex((parameter) => (parameter.id === id))
                 data.allParameters.splice(deletedParameterIndex, 1)
-                store.writeQuery({query: ALL_PARAMETERS_QUERY, data, variables: { id: userId }})
+                store.writeQuery({query: ALL_PARAMETERS_QUERY, data, variables: { id: userId, industryId: industryId }})
+            }
+        })
+    }
+    _handleUpdateParameter =  (id, newParam, newResponse) => {
+        this.props.updateParameterMutation({
+            variables: {
+                id: id,
+                param: newParam,
+                response: newResponse
             }
         })
     }
     _handleNewParameter = async () => {
         const { newParameter, newResponse } = this.state
-        let id = localStorage.getItem(GC_USER_ID)
-        console.log('param: ' + newParameter + ', response: ' + newResponse)
+        const userId = localStorage.getItem(GC_USER_ID)
+        const industryId = this.props.selectedIndustryId
         await this.props.addParameterMutation({
             variables: {
+                industriesIds: industryId,
                 param: newParameter,
                 response: newResponse,
-                id: id
+                userId: userId
             },
             update: (store, {data: {createParameter} }) => {
-                const userId = localStorage.getItem(GC_USER_ID)
                 const data = store.readQuery({
                     query: ALL_PARAMETERS_QUERY,
-                    variables: { id: userId }
+                    variables: { id: userId, industryId: industryId }
                 })
                 data.allParameters.push(createParameter)
                 store.writeQuery({
                     query: ALL_PARAMETERS_QUERY,
                     data,
-                    variables: { id: userId }
+                    variables: { id: userId, industryId: industryId }
                 })
             }
         })
@@ -156,12 +166,20 @@ export const ALL_PARAMETERS_QUERY = gql`
           industries {id}
         }}`
 const ADD_PARAMETER_MUTATION = gql`
-    mutation AddParameterMutation( $id: ID!, $param: String!, $response: String!){
-        createParameter( userId: $id, param: $param, response: $response){
+    mutation AddParameterMutation( $userId: ID!, $industriesIds: [ID!], $param: String!, $response: String!){
+        createParameter( userId: $userId,  industriesIds: $industriesIds, param: $param, response: $response){
             param
             response
             id
             default
+            industries {id}
+    }}`
+const UPDATE_PARAMETER_MUTATION = gql`
+    mutation UpdateParameterMutation( $id: ID!, $param: String!, $response: String!){
+        updateParameter( id: $id,  param: $param, response: $response){
+            id
+            param
+            response
     }}`
 const DELETE_PARAMETER_MUTATION = gql`
   mutation DeleteParameterMutation($id: ID!) {
@@ -181,6 +199,7 @@ export default compose(
                 variables: { id: userId, industryId: industryId }
         }}}),
     graphql(ADD_PARAMETER_MUTATION, {name: 'addParameterMutation'}),
+    graphql(UPDATE_PARAMETER_MUTATION, {name: 'updateParameterMutation'}),
     graphql(DELETE_PARAMETER_MUTATION, {name: 'deletedParameterMutation'})
 )(ParameterList)
 

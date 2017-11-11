@@ -54,12 +54,15 @@ class Parameter extends Component {
         )
     }
     _updateParameter = () => {
-        const id = this.props.parameter.id;
-        this.props.deleteParameter(id);
+        const id = this.props.parameter.id
+        const newParam = this.state.param
+        const newResponse = this.state.response
+        this.props.updateParameter(id, newParam, newResponse)
+        this.setState({ updateParameter: false })
     }
     _deleteParameter = () => {
-        const id = this.props.parameter.id;
-        this.props.deleteParameter(id);
+        const id = this.props.parameter.id
+        this.props.deleteParameter(id)
     }
 }
 

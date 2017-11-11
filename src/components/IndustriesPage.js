@@ -8,7 +8,7 @@ class IndustriesPage extends Component {
     render() {
         const GenericIndustry = () => {
             return (
-                <div className='mt3 mb3 mw300p'>
+                <div className='ma3 mw300p'>
                     <div className='industry-box-user flex items-center h-100'>
                         <div className='pt1 pb1 fw4 black flex-1 text-capitalize ma1 ml2'>Generic</div>
                     </div>
@@ -83,13 +83,9 @@ class IndustriesPage extends Component {
                 industryId: industryId,
                 userId: userId
             },
-            update: (store, {data: {addIndustryId} }) => {
-                const userId = localStorage.getItem(GC_USER_ID)
-                const data = store.readQuery({
-                    query: ALL_INDUSTRIES_QUERY,
-                    variables: { id: userId }
-                })
-                data.allSocialPosts.push(addIndustryId)
+            update: (store, {data: {addToUserIndustries} }) => {
+                const data = store.readQuery({query: ALL_INDUSTRIES_QUERY, variables: { id: userId }})
+                data.allIndustries.push(addToUserIndustries)
                 store.writeQuery({
                     query: ALL_INDUSTRIES_QUERY,
                     data,
@@ -106,7 +102,6 @@ class IndustriesPage extends Component {
                 userId: userId
             },
             update: (store) => {
-                const userId = localStorage.getItem(GC_USER_ID)
                 const data = store.readQuery({query: ALL_INDUSTRIES_QUERY, variables: { id: userId }})
                 const removedIndustryIndex = data.allIndustries.findIndex((industry) => (industry.id === industryId))
                 data.allIndustries.splice(removedIndustryIndex, 1)
@@ -130,6 +125,7 @@ const ADD_INDUSTRY_MUTATION = gql`
         addToUserIndustries(usersUserId: $userId, industriesIndustryId: $industryId){
             industriesIndustry {
                 id
+                industry
                 }
         }}`
 const REMOVE_INDUSTRY_MUTATION = gql`
@@ -152,3 +148,26 @@ export default compose(
     graphql(ADD_INDUSTRY_MUTATION, {name: 'addIndustryMutation'}),
     graphql(REMOVE_INDUSTRY_MUTATION, {name: 'removeIndustryMutation'})
 )(IndustriesPage)
+/*
+ mutation {
+   addToUserIndustries(
+    usersUserId: "cj9thr98jcyyg01389w1npqfo",
+    industriesIndustryId: "cj8vqi8ko00170195qdj3zuqh"){
+            industriesIndustry {
+                id
+                industry
+                }
+        }}
+
+        Response:
+{
+  "data": {
+    "addToUserIndustries": {
+      "industriesIndustry": {
+        "id": "cj8vqi8ko00170195qdj3zuqh",
+        "industry": "Automotive"
+      }
+    }
+  }
+}
+ */

@@ -81,22 +81,29 @@ class SocialPostList extends Component {
         )
     }
     _handleDeleteSocialPost =  (id) => {
-        console.log('deleting post ID: ' + id )
         this.props.deletedSocialPostMutation({
             variables: {
                 id: id
             },
             update: (store) => {
                 const userId = localStorage.getItem(GC_USER_ID)
-                const data = store.readQuery({query: ALL_SOCIAL_POSTS_QUERY, variables: { id: userId }})
+                const industryId = this.props.selectedIndustryId
+                const data = store.readQuery({query: ALL_SOCIAL_POSTS_QUERY, variables: {
+                    id: userId,
+                    industryId: industryId,
+                    searchText: this.props.searchText
+                }})
                 const deletedSocialPostIndex = data.allSocialPosts.findIndex((socialPost) => (socialPost.id === id))
                 data.allSocialPosts.splice(deletedSocialPostIndex, 1)
-                store.writeQuery({query: ALL_SOCIAL_POSTS_QUERY, data, variables: { id: userId }})
+                store.writeQuery({query: ALL_SOCIAL_POSTS_QUERY, data, variables: {
+                    id: userId,
+                    industryId: industryId,
+                    searchText: this.props.searchText
+                }})
             }
         })
     }
     _handleUpdateSocialPost =  (id, newMessage) => {
-        console.log('ID of post updated: ' + id )
         this.props.updateSocialPostMutation({
             variables: {
                 id: id,
@@ -106,24 +113,31 @@ class SocialPostList extends Component {
     }
     _handleNewSocialPost = async () => {
         const { newSocialPost } = this.state
-        let id = localStorage.getItem(GC_USER_ID)
-        console.log('message: ' + newSocialPost)
+        const userId = localStorage.getItem(GC_USER_ID)
         await this.props.addSocialPostMutation({
             variables: {
                 message: newSocialPost,
-                id: id
+                id: userId
             },
             update: (store, {data: {createSocialPost} }) => {
-                const userId = localStorage.getItem(GC_USER_ID)
+                const industryId = this.props.selectedIndustryId
                 const data = store.readQuery({
                     query: ALL_SOCIAL_POSTS_QUERY,
-                    variables: { id: userId }
+                    variables: {
+                        id: userId,
+                        industryId: industryId,
+                        searchText: this.props.searchText
+                    }
                 })
                 data.allSocialPosts.push(createSocialPost)
                 store.writeQuery({
                     query: ALL_SOCIAL_POSTS_QUERY,
                     data,
-                    variables: { id: userId }
+                    variables: {
+                        id: userId,
+                        industryId: industryId,
+                        searchText: this.props.searchText
+                    }
                 })
             }
         })
@@ -155,6 +169,7 @@ const ADD_SOCIAL_POSTS_MUTATION = gql`
             message
             id
             default
+            industries {id}
     }}`
 const UPDATE_SOCIAL_POSTS_MUTATION = gql`
     mutation UpdateSocialPost($id: ID!, $message: String!){

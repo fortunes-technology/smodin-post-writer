@@ -21,7 +21,7 @@ class Industry extends Component {
     }
     render() {
         return (
-            <div className='mt3 mb3 mw300p'>
+            <div className='ma3 mw300p'>
                 {(this.state.userIndustry) ?
                 <div className='industry-box-user flex items-center h-100'>
                     <div className='pt1 pb1 fw4 black flex-1 text-capitalize ma1 ml2'>{this.props.industry}</div>
