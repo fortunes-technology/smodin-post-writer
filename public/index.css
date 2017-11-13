@@ -47,6 +47,9 @@ input[type=checkbox] {
 .flex-1{
   flex: 1;
 }
+.flex-2{
+  flex: 2;
+}
 .fill-area {
   display: flex;
   flex-direction: row;
@@ -287,7 +290,9 @@ input[type=checkbox] {
 .f11 {
   font-size: 11px;
 }
-
+.hover-blue:hover {
+  color: #2e6da4;
+}
 .w85 {
   width: 85%;
 }

@@ -70,7 +70,7 @@ class IndustryList extends Component {
             )
         }
         return (
-            <div>
+            <div className='flex-column justify-between'>
                 <div>
                     <h3 className='tc mb2 ml1 mt2 dark-gray'>Industries</h3>
                     <IndustryArrayMap />

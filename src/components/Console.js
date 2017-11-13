@@ -27,7 +27,7 @@ class Console extends Component {
     render() {
         return (
             <div className='flexbox-parent-console'>
-                <div className='pt1 pr2 pl1 w235p bg-black-10'>
+                <div className='pt1 pr2 pl1 w235p bg-black-10 flex'>
                     <IndustryList
                             defaultIndustryId={this.state.selectedIndustryId}
                             defaultIndustry={this.state.selectedIndustry}
