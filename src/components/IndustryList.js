@@ -34,7 +34,13 @@ class IndustryList extends Component {
                             <h4
                                 href='#'
                                 className='industryoption-selected tc mb2 ml1 mt2'>Generic</h4>
-                        </div> : null}
+                        </div>
+                        :<div>
+                            <hr className='center w85'></hr>
+                            <h4
+                                href='#'
+                                className='industryoption tc mb2 ml1 mt2'>Generic</h4>
+                        </div>}
                     </div>
                 )
             }

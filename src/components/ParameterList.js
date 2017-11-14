@@ -28,69 +28,86 @@ class ParameterList extends Component {
                 </div>
             )
         }
-        if (this.props.allParametersQuery && this.props.allParametersQuery.loading) {
-            return (
-                <div>
-                    Loading...
-                </div>
+        const RowHeader = () => {
+            return(
+                <thead>
+                    <tr>
+                        <th id='parameterstable-th-td'>Number</th>
+                        <th id='parameterstable-th-td'>Parameter</th>
+                        <th id='parameterstable-th-td'>Response</th>
+                        <th id='parameterstable-th-td'>Options</th>
+                    </tr>
+                </thead>
             )
         }
-        if (this.props.allParametersQuery && this.props.allParametersQuery.error) {
-            return (
-                <div>
-                    {this.props.allParametersQuery.error}
-                </div>
+        const RowsParameterArrayMap = () => {
+            if (this.props.allParametersQuery && this.props.allParametersQuery.loading) {
+                return (
+                    <Parameter
+                        parameter={{param: 'loading...',response: 'loading...',id: '0'}}
+                        index={0}
+                        deleteParameter={(e)=>console.log('still loading...')}
+                        updateParameter={(e)=>console.log('still loading...')}/>
+                )
+            }
+            if (this.props.allParametersQuery && this.props.allParametersQuery.error) {
+                return (
+                    <Parameter
+                        parameter={{param: 'Error...',response: 'Error...',id: '0'}}
+                        index={0}
+                        deleteParameter={(e)=>console.log('error')}
+                        updateParameter={(e)=>console.log('error')}/>
+                )
+            }
+            return this.props.allParametersQuery.allParameters.map((parameter, index) => (
+                <Parameter
+                    key={parameter.id}
+                    parameter={parameter}
+                    index={index}
+                    deleteParameter={this._handleDeleteParameter}
+                    updateParameter={this._handleUpdateParameter}/>
+            ))
+        }
+        const RowAddNewParameter = () => {
+            return(
+                <tbody id='parameterstable-tr'>
+                <tr>
+                    <td id='parameterstable-th-td'>#</td>
+                    <td id='parameterstable-th-td'>
+                                <span className='parameterinputsidetext nowrap mr5'>
+                                    <span>{'{{'}</span>
+                                        <input
+                                        className='parameterinput b--solid-ns b--black-10'
+                                        onChange={(e) => this.setState({ newParameter: e.target.value })}
+                                        value={this.state.newParameter}
+                                        placeholder='Your New Parameter...'
+                                        type='text'/>
+                                        <span>{'}}'}</span>
+                                </span>
+                    </td>
+                    <td id='parameterstable-th-td'>
+                        <input
+                            className='pa1 br3 b--solid-ns b--black-40'
+                            onChange={(e) => this.setState({ newResponse: e.target.value })}
+                            value={this.state.newResponse}
+                            placeholder='Your New Response...'
+                            type='text'/>
+                    </td>
+                    <td id='parameterstable-th-td'>
+                        <button
+                            className='bg-green b--dark-green br3 pr2 pl2 pb1 pt1 white-90 fw8'
+                            onClick={() => {this._handleNewParameter()}}>Submit</button>
+                    </td>
+                </tr>
+                </tbody>
             )
         }
         return (
             <div>
                 <table className='mt2 center' id='parameterstable'>
-                    <thead>
-                        <tr>
-                            <th id='parameterstable-th-td'>Number</th>
-                            <th id='parameterstable-th-td'>Parameter</th>
-                            <th id='parameterstable-th-td'>Response</th>
-                            <th id='parameterstable-th-td'>Options</th>
-                        </tr>
-                    </thead>
-                    {this.props.allParametersQuery.allParameters.map((parameter, index) => (
-                            <Parameter
-                                key={parameter.id}
-                                parameter={parameter}
-                                index={index}
-                                deleteParameter={this._handleDeleteParameter}
-                                updateParameter={this._handleUpdateParameter}/>
-                    ))}
-                    <tbody id='parameterstable-tr'>
-                        <tr>
-                            <td id='parameterstable-th-td'>#</td>
-                            <td id='parameterstable-th-td'>
-                                <span className='parameterinputsidetext nowrap mr5'>
-                                    <span>{'{{'}</span>
-                                        <input
-                                            className='parameterinput b--solid-ns b--black-10'
-                                            onChange={(e) => this.setState({ newParameter: e.target.value })}
-                                            value={this.state.newParameter}
-                                            placeholder='Your New Parameter...'
-                                            type='text'/>
-                                    <span>{'}}'}</span>
-                                </span>
-                            </td>
-                            <td id='parameterstable-th-td'>
-                                <input
-                                    className='pa1 br3 b--solid-ns b--black-40'
-                                    onChange={(e) => this.setState({ newResponse: e.target.value })}
-                                    value={this.state.newResponse}
-                                    placeholder='Your New Response...'
-                                    type='text'/>
-                            </td>
-                            <td id='parameterstable-th-td'>
-                                <button
-                                    className='bg-green b--dark-green br3 pr2 pl2 pb1 pt1 white-90 fw8'
-                                    onClick={() => {this._handleNewParameter()}}>Submit</button>
-                            </td>
-                        </tr>
-                    </tbody>
+                    <RowHeader />
+                    <RowsParameterArrayMap />
+                    <RowAddNewParameter />
                 </table>
             </div>
         )

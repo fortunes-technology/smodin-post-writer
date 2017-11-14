@@ -143,7 +143,7 @@ input[type=checkbox] {
    color: #3a3a3a;
   width: 225px;
   font-weight: 600;
-   padding: 3px 6px 4px;
+   padding: 3px 6px 3px;
    border-radius: 12px;
   outline: none;
   -webkit-appearance: none;
@@ -265,6 +265,10 @@ input[type=checkbox] {
 }
 .bg-smodin-red {
   background-color: #ff3d46;
+}
+.b--t-smodin-red {
+  border-top: 2px solid;
+  border-color: #ff3d46;
 }
 .b--smodin-red {
    border-color: #ff3d46;

@@ -30,41 +30,49 @@ class SocialPostList extends Component {
                 </div>
             )
         }
-        if (this.props.allSocialPostsQuery && this.props.allSocialPostsQuery.loading) {
-            return (
-                <div>
-                    Loading...
-                </div>
-            )
-        }
-        if (this.props.allSocialPostsQuery && this.props.allSocialPostsQuery.error) {
-            return (
-                <div>
-                    {this.props.allSocialPostsQuery.error}
-                </div>
-            )
+        const SocialPostArrayMap = () => {
+            if (this.props.allSocialPostsQuery && this.props.allSocialPostsQuery.loading) {
+                return (
+                    <SocialPost
+                        socialPost={{message: 'loading...', id: '0'}}
+                        index={0}
+                        deleteSocialPost={(e)=>console.log('still loading...')}
+                        updateSocialPost={(e)=>console.log('still loading...')}
+                        allParametersQuery={[]}/>
+                )
+            }
+            if (this.props.allSocialPostsQuery && this.props.allSocialPostsQuery.error) {
+                return (
+                    <SocialPost
+                        socialPost={{message: 'Error', id: '0'}}
+                        index={0}
+                        deleteSocialPost={(e)=>console.log('error')}
+                        updateSocialPost={(e)=>console.log('error')}
+                        allParametersQuery={[]}/>
+                )
+            }
+            return this.props.allSocialPostsQuery.allSocialPosts.map((socialPost, index) => (
+                <SocialPost
+                    key={socialPost.id}
+                    socialPost={socialPost}
+                    index={index}
+                    deleteSocialPost={this._handleDeleteSocialPost}
+                    updateSocialPost={this._handleUpdateSocialPost}
+                    allParametersQuery={this.props.allParametersQuery}/>
+            ))
         }
         return (
             <div className='flex-1 flexbox-parent-console'>
                 <div className='flex-1 fill-area-content overflow-y-scroll'>
-                    {this.props.allSocialPostsQuery.allSocialPosts.map((socialPost, index) => (
-                        <SocialPost
-                            key={socialPost.id}
-                            socialPost={socialPost}
-                            index={index}
-                            deleteSocialPost={this._handleDeleteSocialPost}
-                            updateSocialPost={this._handleUpdateSocialPost}
-                            allParametersQuery={this.props.allParametersQuery}/>
-                    ))}
-                    <div>
-                        <form className='mt3'>
-                            <input
-                                onChange={(e) => this.setState({ newSocialPost: e.target.value })}
-                                value={this.state.newSocialPost}
-                                placeholder='Your New Post...'
-                                type='text'/>
-                        </form>
-                        <button className='button mt3' onClick={() => this._handleNewSocialPost()}>Submit</button>
+                    <SocialPostArrayMap />
+                    <div className='inline-flex items-center mt2 w-100'>
+                        <input
+                            className='flex-1 pa1 br3 b--solid-ns b--black-40'
+                            onChange={(e) => this.setState({ newSocialPost: e.target.value })}
+                            value={this.state.newSocialPost}
+                            placeholder='Your New Post...'
+                            type='text'/>
+                        <button className='ml3 mr3 bg-green b--dark-green br3 pr2 pl2 pb1 pt1 white-90 fw8' onClick={() => this._handleNewSocialPost()}>Submit</button>
                     </div>
                 </div>
                 <div className='w350p bg-black-20'>

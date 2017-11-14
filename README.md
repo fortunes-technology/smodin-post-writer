@@ -10,4 +10,9 @@ This platform was built using
 - GraphQL (API)
 - ReachJS (Frontend)
 
+## Feature List
+
+## Future Features in Progress
+
+
 Copywrite  OTA AI, Inc. 2017

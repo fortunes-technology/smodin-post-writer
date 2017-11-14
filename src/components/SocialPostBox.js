@@ -11,31 +11,41 @@ class SocialPostBox extends Component {
     }
     render() {
         const SocialPostExamplesArray = () => {
-            if (this.props.allSocialPostExamplesQuery.allSocialPostExamples && this.props.allSocialPostExamplesQuery.allSocialPostExamples.loading) return <div>Loading...</div>
-            if (this.props.allSocialPostExamplesQuery.allSocialPostExamples && this.props.allSocialPostExamplesQuery.allSocialPostExamples.error) return <div>Error :(</div>
-            if (this.props.allSocialPostExamplesQuery.allSocialPostExamples) return (
-                <div>
-                    {this.props.allSocialPostExamplesQuery.allSocialPostExamples.map((SocialPost, index) => (
+            if (this.props.allSocialPostExamplesQuery.allSocialPostExamples && this.props.allSocialPostExamplesQuery.allSocialPostExamples.loading)
+                return(
+                    <div
+                        className='social-post-example' >loading...</div>
+                )
+            if (this.props.allSocialPostExamplesQuery.allSocialPostExamples && this.props.allSocialPostExamplesQuery.allSocialPostExamples.error)
+                return(
+                    <div
+                        className='social-post-example' >Error</div>
+                )
+            if (this.props.allSocialPostExamplesQuery.allSocialPostExamples)
+                return this.props.allSocialPostExamplesQuery.allSocialPostExamples.map((SocialPost, index) => (
                         <div
                             key={index}
                             className='social-post-example' >{SocialPost.message}</div>
-                    ))}
-                </div>
-            )
+                    ))
             return null
         }
         const SocialPostIdeasArray = () => {
-            if (this.props.allSocialPostIdeasQuery.allSocialPostIdeas && this.props.allSocialPostIdeasQuery.allSocialPostIdeas.loading) return <div>Loading...</div>
-            if (this.props.allSocialPostIdeasQuery.allSocialPostIdeas && this.props.allSocialPostIdeasQuery.allSocialPostIdeas.error) return <div>Error :(</div>
-            if (this.props.allSocialPostIdeasQuery.allSocialPostIdeas) return (
-                <div>
-                    {this.props.allSocialPostIdeasQuery.allSocialPostIdeas.map((SocialPost, index) => (
+            if (this.props.allSocialPostIdeasQuery.allSocialPostIdeas && this.props.allSocialPostIdeasQuery.allSocialPostIdeas.loading)
+                return (
+                    <div
+                        className='social-post-idea' >loading...</div>
+                )
+            if (this.props.allSocialPostIdeasQuery.allSocialPostIdeas && this.props.allSocialPostIdeasQuery.allSocialPostIdeas.error)
+                return (
+                    <div
+                        className='social-post-idea' >Error</div>
+                )
+            if (this.props.allSocialPostIdeasQuery.allSocialPostIdeas)
+                return this.props.allSocialPostIdeasQuery.allSocialPostIdeas.map((SocialPost, index) => (
                         <div
                             key={index}
                             className='social-post-idea' >{SocialPost.idea}</div>
-                    ))}
-                </div>
-            )
+                    ))
             return null
         }
         return (
@@ -60,14 +70,7 @@ class SocialPostBox extends Component {
         )
     }
 }
-/*
-{(this.state.tab === 'socialpostexamples')?
-    <div className='post-side-tab-chosen flex-auto pa0'>Examples</div>
-    :<div className='post-side-tab flex-auto pa0' onClick={(e)=>this.setState({tab: 'socialpostexamples'})}>Examples</div>}
-{(this.state.tab === 'socialpostideas')?
-    <div className='post-side-tab-chosen flex-auto pa0'>Ideas</div>
-    :<div className='post-side-tab flex-auto pa0' onClick={(e)=>this.setState({tab: 'socialpostideas'})}>Ideas</div>}
-*/
+
 const ALL_SOCIAL_POST_EXAMPLES_QUERY = gql`
   query AllSocialPostExamplesQuery ($industryId: ID!) {
     allSocialPostExamples (filter:{

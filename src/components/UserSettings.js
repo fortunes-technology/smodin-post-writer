@@ -43,17 +43,22 @@ class UserSettings extends Component {
             )
         }
         return (
-            <div>
+            <div className='w-50'>
                 <h1 className="tc">Settings</h1>
-                <div className="ma3">
-                    <strong>Name: </strong>
-                    {this.props.userSettingsQuery.User.name}
-                            <input
-                                type='text'
-                                placeholder='New Name...'
-                                onChange={(e) => this.setState({ name: e.target.value })}
-                                />
-                    <button onClick={ this._updateName }>update</button>                </div>
+                <div className="flex ma3 justify-between items-center">
+                    <div className=''><strong>Name: </strong> {this.props.userSettingsQuery.User.name}</div>
+                    <div>
+                        <input
+                            className='ml3 pa1 br3 b--solid-ns b--black-40'
+                            type='text'
+                            placeholder='New Name...'
+                            onChange={(e) => this.setState({ name: e.target.value })}
+                            />
+                        <button
+                            className='ml3 mr3 bg-green b--dark-green br3 pr2 pl2 pb1 pt1 white-90 fw8'
+                            onClick={ this._updateName }>update</button>
+                    </div>
+                </div>
                 <div className="ma3"><strong>Email: </strong>{this.props.userSettingsQuery.User.email} </div>
             </div>
         )

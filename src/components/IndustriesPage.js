@@ -28,50 +28,45 @@ class IndustriesPage extends Component {
                 </div>
             )
         }
-        if (this.props.allIndustriesNoFilterQuery && this.props.allIndustriesNoFilterQuery.loading) {
-            return (
-                <div>
-                    Loading...
-                </div>
-            )
-        }
-        if (this.props.allIndustriesNoFilterQuery && this.props.allIndustriesNoFilterQuery.error) {
-            return (
-                <div>
-                    {this.props.allIndustriesQuery.error}
-                </div>
-            )
-        }
-        if (this.props.allUserIndustriesQuery && this.props.allUserIndustriesQuery.loading) {
-            return (
-                <div>
-                    Loading...
-                </div>
-            )
-        }
-        if (this.props.allUserIndustriesQuery && this.props.allUserIndustriesQuery.error) {
-            return (
-                <div>
-                    {this.props.allIndustriesQuery.error}
-                </div>
-            )
+        const IndustryArrayMap = () => {
+            if ((this.props.allIndustriesNoFilterQuery && this.props.allIndustriesNoFilterQuery.loading) || (this.props.allUserIndustriesQuery && this.props.allUserIndustriesQuery.loading))
+                return (
+                    <Industry
+                        allUserIndustriesQuery={{allIndustries:[{id: '1', industry: 'Non Industry'}]}}
+                        className='tc mb2 ml1 mt2'
+                        industryId={0}
+                        industry={'loading the rest...'}
+                        addIndustry={(e)=>console.log('still loading...')}
+                        removeIndustry={(e)=>console.log('still loading...')}/>
+                )
+            if ((this.props.allIndustriesNoFilterQuery && this.props.allIndustriesNoFilterQuery.error) || (this.props.allUserIndustriesQuery && this.props.allUserIndustriesQuery.loading))
+                return (
+                    <Industry
+                        allUserIndustriesQuery={{allIndustries:[{id: '1', industry: 'Non Industry'}]}}
+                        className='tc mb2 ml1 mt2'
+                        industryId={0}
+                        industry={'Error Fetching Industries'}
+                        addIndustry={(e)=>console.log('error')}
+                        removeIndustry={(e)=>console.log('error')}/>
+                )
+            return this.props.allIndustriesNoFilterQuery.allIndustries.map(industry => (
+                (!industry.default)?
+                    <Industry
+                        key={industry.id}
+                        allUserIndustriesQuery={this.props.allUserIndustriesQuery}
+                        className='tc mb2 ml1 mt2'
+                        industryId={industry.id}
+                        industry={industry.industry}
+                        addIndustry={this._handleAddIndustry}
+                        removeIndustry={this._handleRemoveIndustry}/>: null
+            ))
         }
         return (
             <div className='w-80'>
                 <h2 className=' tc mb2 mt2 dark-gray'>Industries</h2>
                 <div className='flex justify-between flex-wrap'>
                     <GenericIndustry />
-                    {this.props.allIndustriesNoFilterQuery.allIndustries.map(industry => (
-                        (!industry.default)?
-                        <Industry
-                            key={industry.id}
-                            allUserIndustriesQuery={this.props.allUserIndustriesQuery}
-                            className='tc mb2 ml1 mt2'
-                            industryId={industry.id}
-                            industry={industry.industry}
-                            addIndustry={this._handleAddIndustry}
-                            removeIndustry={this._handleRemoveIndustry}/>: null
-                        ))}
+                    <IndustryArrayMap />
                 </div>
             </div>
         )

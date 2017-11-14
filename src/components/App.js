@@ -26,7 +26,7 @@ class App extends Component {
                   <Route exact path='/industries' component={IndustriesPage} />
               </Switch>
             </div>
-            <div className='flex bg-black-20 justify-between'>
+            <div className='flex bg-black-20 b--t-smodin-red justify-between'>
                 <div className='flex-1 inline-flex items-center justify-start'>
                     <img src={require('../images/LinkedIn-Logo.png')} height='20' />
                     <a href='https://www.linkedin.com/in/kevin-danikowski'
