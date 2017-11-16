@@ -14,8 +14,7 @@ class SocialPostList extends Component {
         }
     }
     componentWillUpdate(nextProps, nextState){
-        if (nextProps.selectedIndustryId === this.props.selectedIndustryId) return
-        if (nextProps.searchText === this.props.searchText) return
+        if (nextProps === this.props) return false
     }
     render() {
         const userId = localStorage.getItem(GC_USER_ID)
@@ -38,20 +37,21 @@ class SocialPostList extends Component {
                         index={0}
                         deleteSocialPost={(e)=>console.log('still loading...')}
                         updateSocialPost={(e)=>console.log('still loading...')}
-                        allParametersQuery={[]}/>
+                        allParametersQuery={{allParameters: [{param: 'non param', response: 'non response', id:'0000'}]}}/>
                 )
             }
             if (this.props.allSocialPostsQuery && this.props.allSocialPostsQuery.error) {
                 return (
                     <SocialPost
-                        socialPost={{message: 'Error', id: '0'}}
+                        socialPost={{message: 'error', id: '0'}}
                         index={0}
                         deleteSocialPost={(e)=>console.log('error')}
                         updateSocialPost={(e)=>console.log('error')}
-                        allParametersQuery={[]}/>
+                        allParametersQuery={{allParameters: [{param: 'non param', response: 'non response', id:'0000'}]}}/>
                 )
             }
-            return this.props.allSocialPostsQuery.allSocialPosts.map((socialPost, index) => (
+            if (this.props.allSocialPostsQuery){
+                return this.props.allSocialPostsQuery.allSocialPosts.map((socialPost, index) => (
                 <SocialPost
                     key={socialPost.id}
                     socialPost={socialPost}
@@ -59,20 +59,29 @@ class SocialPostList extends Component {
                     deleteSocialPost={this._handleDeleteSocialPost}
                     updateSocialPost={this._handleUpdateSocialPost}
                     allParametersQuery={this.props.allParametersQuery}/>
-            ))
+            ))}
+            return (
+                <SocialPost
+                    socialPost={{message: 'Last Result', id: '0'}}
+                    index={0}
+                    deleteSocialPost={(e)=>console.log('Last Result')}
+                    updateSocialPost={(e)=>console.log('Last Result')}
+                    allParametersQuery={{allParameters: [{param: 'non param', response: 'non response', id:'0000'}]}}/>
+            )
         }
         return (
             <div className='flex-1 flexbox-parent-console'>
                 <div className='flex-1 fill-area-content overflow-y-scroll'>
                     <SocialPostArrayMap />
-                    <div className='inline-flex items-center mt2 w-100'>
+                    <div className='inline-flex items-center mt2 w-100 mb2'>
                         <input
                             className='flex-1 pa1 br3 b--solid-ns b--black-40'
                             onChange={(e) => this.setState({ newSocialPost: e.target.value })}
                             value={this.state.newSocialPost}
                             placeholder='Your New Post...'
                             type='text'/>
-                        <button className='ml3 mr3 bg-green b--dark-green br3 pr2 pl2 pb1 pt1 white-90 fw8' onClick={() => this._handleNewSocialPost()}>Submit</button>
+                        <button className='ml3 mr3 bg-green b--dark-green br3 pr2 pl2 pb1 pt1 white-90 fw8'
+                                onClick={() => this._handleNewSocialPost()}>Submit</button>
                     </div>
                 </div>
                 <div className='w350p bg-black-20'>
@@ -121,14 +130,15 @@ class SocialPostList extends Component {
     }
     _handleNewSocialPost = async () => {
         const { newSocialPost } = this.state
+        const industryId = this.props.selectedIndustryId
         const userId = localStorage.getItem(GC_USER_ID)
         await this.props.addSocialPostMutation({
             variables: {
+                industriesIds: industryId,
                 message: newSocialPost,
                 id: userId
             },
             update: (store, {data: {createSocialPost} }) => {
-                const industryId = this.props.selectedIndustryId
                 const data = store.readQuery({
                     query: ALL_SOCIAL_POSTS_QUERY,
                     variables: {
@@ -172,8 +182,8 @@ const ALL_SOCIAL_POSTS_QUERY = gql`
           industries {id}
         }}`
 const ADD_SOCIAL_POSTS_MUTATION = gql`
-    mutation AddSocialPostMutation($id: ID!, $message: String!){
-        createSocialPost(userId: $id, message: $message){
+    mutation AddSocialPostMutation($id: ID!, $message: String!, $industriesIds: [ID!]){
+        createSocialPost(userId: $id, message: $message, industriesIds: $industriesIds){
             message
             id
             default

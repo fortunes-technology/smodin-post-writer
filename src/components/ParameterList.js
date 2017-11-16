@@ -20,7 +20,7 @@ class ParameterList extends Component {
         if (!userId){
             return(
                 <div>
-                    <h1 className="tc">Oops! You're not logged in!</h1>
+                    <h1 className="tc">Oops! You are not logged in!</h1>
                     <button onClick={() => {
                         this.props.history.push('/login')
                     }}>Login

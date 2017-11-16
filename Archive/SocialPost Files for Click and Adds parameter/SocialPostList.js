@@ -1,8 +1,9 @@
 import React, { Component } from 'react'
-import ReactDOM from 'react-dom'
 import { graphql, gql, compose } from 'react-apollo'
 import { GC_USER_ID } from '../constants'
 import SocialPost from './SocialPost'
+import ParametersBox from './ParametersBox'
+import SocialPostBox from './SocialPostBox'
 import { ALL_PARAMETERS_QUERY } from './ParameterList'
 
 class SocialPostList extends Component {
@@ -12,29 +13,12 @@ class SocialPostList extends Component {
             newSocialPost: ''
         }
     }
-    checkFocusedElement = () =>{
-        if (document.activeElement === ReactDOM.findDOMNode(this.child)){
-            console.log('its active')
-        }
-        console.log(document.activeElement)
+    componentWillUpdate(nextProps, nextState){
+        if (nextProps.selectedIndustryId === this.props.selectedIndustryId) return
+        if (nextProps.searchText === this.props.searchText) return
     }
     render() {
         const userId = localStorage.getItem(GC_USER_ID)
-        const PostListArray = () => {
-            if (this.props.allParametersQuery.allParameters && this.props.allParametersQuery.allParameters.loading) return <div>Loading</div>
-            if (this.props.allParametersQuery.allParameters && this.props.allParametersQuery.allParameters.error) return <div>Error</div>
-            if (this.props.allParametersQuery.allParameters) return (
-                    <div className='ma3' onClick={(e) => {e.preventDefault(); e.stopPropagation()}}>
-                        {this.props.allParametersQuery.allParameters.map((parameter, index) => (
-                            <div
-                                key={index}
-                                onClick={(e) => {this.checkFocusedElement;let lastFocusedElement = document.activeElement; lastFocusedElement.focus(); this.child.parameterClicked(parameter.param, parameter.id)}}
-                                className='parameterhover inline-flex ma1 parameterborder' >{'{{' + parameter.param + '}}'}</div>
-                        ))}
-                    </div>
-                )
-            return null
-        }
         if (!userId){
             return(
                 <div>
@@ -61,50 +45,65 @@ class SocialPostList extends Component {
             )
         }
         return (
-            <div>
-                <h1>Social Posts</h1>
-                <h4 className='mb2 b'>Available Parameters:</h4>
-                <PostListArray />
-                {this.props.allSocialPostsQuery.allSocialPosts.map((socialPost, index) => (
-                    <SocialPost
-                        ref={instance => {this.child = instance}}
-                        key={socialPost.id}
-                        socialPost={socialPost}
-                        index={index}
-                        deleteSocialPost={this._handleDeleteSocialPost}
-                        updateSocialPost={this._handleUpdateSocialPost}
-                        allParametersQuery={this.props.allParametersQuery}/>
-                ))}
-                <div>
-                    <form className='mt3'>
-                        <input
-                            onChange={(e) => this.setState({ newSocialPost: e.target.value })}
-                            value={this.state.newSocialPost}
-                            placeholder='Your New Post...'
-                            type='text'/>
-                    </form>
-                    <button className='button mt3' onClick={() => this._handleNewSocialPost()}>Submit</button>
+            <div className='flex-1 flexbox-parent-console'>
+                <div className='flex-1 fill-area-content overflow-y-scroll'>
+                    {this.props.allSocialPostsQuery.allSocialPosts.map((socialPost, index) => (
+                        <SocialPost
+                            key={socialPost.id}
+                            socialPost={socialPost}
+                            index={index}
+                            deleteSocialPost={this._handleDeleteSocialPost}
+                            updateSocialPost={this._handleUpdateSocialPost}
+                            allParametersQuery={this.props.allParametersQuery}/>
+                    ))}
+                    <div>
+                        <form className='mt3'>
+                            <input
+                                onChange={(e) => this.setState({ newSocialPost: e.target.value })}
+                                value={this.state.newSocialPost}
+                                placeholder='Your New Post...'
+                                type='text'/>
+                        </form>
+                        <button className='button mt3' onClick={() => this._handleNewSocialPost()}>Submit</button>
+                    </div>
+                </div>
+                <div className='w350p bg-black-20'>
+                    <div className='w-100 h-50'>
+                        <ParametersBox
+                            selectedIndustryId={this.props.selectedIndustryId} />
+                    </div>
+                    <div className='w-100 h-50'>
+                        <SocialPostBox
+                            selectedIndustryId={this.props.selectedIndustryId} />
+                    </div>
                 </div>
             </div>
         )
     }
     _handleDeleteSocialPost =  (id) => {
-        console.log('deleting post ID: ' + id )
         this.props.deletedSocialPostMutation({
             variables: {
                 id: id
             },
             update: (store) => {
                 const userId = localStorage.getItem(GC_USER_ID)
-                const data = store.readQuery({query: ALL_SOCIAL_POSTS_QUERY, variables: { id: userId }})
+                const industryId = this.props.selectedIndustryId
+                const data = store.readQuery({query: ALL_SOCIAL_POSTS_QUERY, variables: {
+                    id: userId,
+                    industryId: industryId,
+                    searchText: this.props.searchText
+                }})
                 const deletedSocialPostIndex = data.allSocialPosts.findIndex((socialPost) => (socialPost.id === id))
                 data.allSocialPosts.splice(deletedSocialPostIndex, 1)
-                store.writeQuery({query: ALL_SOCIAL_POSTS_QUERY, data, variables: { id: userId }})
+                store.writeQuery({query: ALL_SOCIAL_POSTS_QUERY, data, variables: {
+                    id: userId,
+                    industryId: industryId,
+                    searchText: this.props.searchText
+                }})
             }
         })
     }
     _handleUpdateSocialPost =  (id, newMessage) => {
-        console.log('ID of post updated: ' + id )
         this.props.updateSocialPostMutation({
             variables: {
                 id: id,
@@ -114,40 +113,54 @@ class SocialPostList extends Component {
     }
     _handleNewSocialPost = async () => {
         const { newSocialPost } = this.state
-        let id = localStorage.getItem(GC_USER_ID)
-        console.log('message: ' + newSocialPost)
+        const userId = localStorage.getItem(GC_USER_ID)
         await this.props.addSocialPostMutation({
             variables: {
                 message: newSocialPost,
-                id: id
+                id: userId
             },
             update: (store, {data: {createSocialPost} }) => {
-                const userId = localStorage.getItem(GC_USER_ID)
+                const industryId = this.props.selectedIndustryId
                 const data = store.readQuery({
                     query: ALL_SOCIAL_POSTS_QUERY,
-                    variables: { id: userId }
+                    variables: {
+                        id: userId,
+                        industryId: industryId,
+                        searchText: this.props.searchText
+                    }
                 })
                 data.allSocialPosts.push(createSocialPost)
                 store.writeQuery({
                     query: ALL_SOCIAL_POSTS_QUERY,
                     data,
-                    variables: { id: userId }
+                    variables: {
+                        id: userId,
+                        industryId: industryId,
+                        searchText: this.props.searchText
+                    }
                 })
             }
-        })
+        });
+        this.setState({ newSocialPost: '' })
     }
 }
-
 const ALL_SOCIAL_POSTS_QUERY = gql`
-  query AllSocialPostsQuery ($id: ID!) {
-    allSocialPosts (filter:{
+  query AllSocialPostsQuery ($id: ID!, $industryId: ID!, $searchText: String!) {
+    allSocialPosts (orderBy: default_DESC, filter:{AND: [{
         user: {
             id: $id
             }
-        }){
+        },{
+            industries_some: { 
+                id: $industryId
+                }
+        },{
+        message_contains: $searchText
+      }]}){
           id
           default
           message
+          industries {id}
         }}`
 const ADD_SOCIAL_POSTS_MUTATION = gql`
     mutation AddSocialPostMutation($id: ID!, $message: String!){
@@ -155,6 +168,7 @@ const ADD_SOCIAL_POSTS_MUTATION = gql`
             message
             id
             default
+            industries {id}
     }}`
 const UPDATE_SOCIAL_POSTS_MUTATION = gql`
     mutation UpdateSocialPost($id: ID!, $message: String!){
@@ -175,10 +189,20 @@ export default compose(
         skip: (ownProps) => (localStorage.getItem(GC_USER_ID) === null),
         options: (ownProps) => {
             const userId = localStorage.getItem(GC_USER_ID)
+            const industryId = ownProps.selectedIndustryId
+            const searchText = ownProps.searchText
             return {
-                variables: { id: userId }
+                variables: { id: userId, industryId: industryId, searchText: searchText }
             }}}),
-    graphql(ALL_PARAMETERS_QUERY, {name: 'allParametersQuery'}),
+    graphql(ALL_PARAMETERS_QUERY, {
+        name: 'allParametersQuery',
+        skip: (ownProps) => (localStorage.getItem(GC_USER_ID) === null),
+        options: (ownProps) => {
+            const userId = localStorage.getItem(GC_USER_ID)
+            const industryId = ownProps.selectedIndustryId
+            return {
+                variables: { id: userId, industryId: industryId }
+            }}}),
     graphql(ADD_SOCIAL_POSTS_MUTATION, {name: 'addSocialPostMutation'}),
     graphql(UPDATE_SOCIAL_POSTS_MUTATION, {name: 'updateSocialPostMutation'}),
     graphql(DELETE_SOCIAL_POSTS_MUTATION, {name: 'deletedSocialPostMutation'})

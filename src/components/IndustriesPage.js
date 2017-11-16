@@ -20,7 +20,7 @@ class IndustriesPage extends Component {
         if (!userId){
             return(
                 <div>
-                    <h1 className="tc">Oops! You're not logged in!</h1>
+                    <h1 className="tc">Oops! You are not logged in!</h1>
                     <button onClick={() => {
                         this.props.history.push('/login')
                     }}>Login
@@ -49,7 +49,8 @@ class IndustriesPage extends Component {
                         addIndustry={(e)=>console.log('error')}
                         removeIndustry={(e)=>console.log('error')}/>
                 )
-            return this.props.allIndustriesNoFilterQuery.allIndustries.map(industry => (
+            if (this.props.allIndustriesNoFilterQuery.allIndustries){
+                return this.props.allIndustriesNoFilterQuery.allIndustries.map(industry => (
                 (!industry.default)?
                     <Industry
                         key={industry.id}
@@ -59,7 +60,16 @@ class IndustriesPage extends Component {
                         industry={industry.industry}
                         addIndustry={this._handleAddIndustry}
                         removeIndustry={this._handleRemoveIndustry}/>: null
-            ))
+            ))}
+            return  (
+                <Industry
+                    allUserIndustriesQuery={{allIndustries:[{id: '1', industry: 'Non Industry'}]}}
+                    className='tc mb2 ml1 mt2'
+                    industryId={0}
+                    industry={'Error Fetching Industries'}
+                    addIndustry={(e)=>console.log('error')}
+                    removeIndustry={(e)=>console.log('error')}/>
+            )
         }
         return (
             <div className='w-80'>
@@ -80,7 +90,7 @@ class IndustriesPage extends Component {
             },
             update: (store, {data: {addToUserIndustries} }) => {
                 const data = store.readQuery({query: ALL_INDUSTRIES_QUERY, variables: { id: userId }})
-                data.allIndustries.push(addToUserIndustries)
+                data.allIndustries.push(Object.values(addToUserIndustries)[0])
                 store.writeQuery({
                     query: ALL_INDUSTRIES_QUERY,
                     data,
@@ -121,6 +131,7 @@ const ADD_INDUSTRY_MUTATION = gql`
             industriesIndustry {
                 id
                 industry
+                default
                 }
         }}`
 const REMOVE_INDUSTRY_MUTATION = gql`

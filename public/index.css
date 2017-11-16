@@ -100,15 +100,15 @@ input[type=checkbox] {
 .social-post-idea {
   background-color: #fffffb;
   border: 2px solid #c8c4c5;
-  border-radius: 30px;
-  padding: 3px 10px;
+  border-radius: 10px;
+  padding: 3px 10px 4px;
   margin: 2px;
 }
 .social-post-example {
   background-color: #fffffb;
   border: 2px solid #c8c4c5;
-  border-radius: 30px;
-  padding: 3px 10px;
+  border-radius: 10px;
+  padding: 3px 10px 4px;
   margin: 2px;
 }
 .industryoption {
@@ -418,6 +418,9 @@ input[type=checkbox] {
   width: 235px;
   min-width: 235px;
   max-width: 235px;
+}
+.w350p {
+  max-width: 350px;
 }
 .w300p {
   width: 350px;

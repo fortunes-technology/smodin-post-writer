@@ -69,10 +69,13 @@ function getFromBetween (sub1, sub2, string) {
     return string.substring(endSub1, between);
 };
 function matchBetween (result, parameterArray, sub1, sub2) {
-    try {
-        let response = parameterArray.find(x => x.param === result).response;
-        return response;
-    } catch (e) { return (sub1 + result + sub2) }
+    if (parameterArray === 'undefined') return (sub1+result+sub2)
+    let responseIndex = parameterArray.findIndex(x => x.param === result)
+    if (responseIndex === -1) return ' NO_PARAMETER_RESPONSE '
+    else {
+        let response = parameterArray[responseIndex].response
+        return response
+    }
 };
 function removeAndReplace (sub1, sub2, replacement, string) {
     if (string.indexOf(sub1) < 0 || string.indexOf(sub2) < 0) return false; // if sub1 or sub2 absent, stops script
