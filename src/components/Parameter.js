@@ -46,7 +46,7 @@ class Parameter extends Component {
                     <td id='parameterstable-th-td'>
                         <a className='ml1 dark-blue hover-gray pointer' onClick={this._deleteParameter}>Delete</a>
                         {(this.state.updateParameter)?
-                            <a className='ml1 absolute red hover-gray pointer' onClick={this._updateParameter}>Update</a>
+                            <a className='ml1 red hover-gray pointer' onClick={this._updateParameter}>Update</a>
                         :   null }
                     </td>
                 </tr>

@@ -12,8 +12,7 @@ class ParameterList extends Component {
         }
     }
     componentWillUpdate(nextProps, nextState){
-        if (nextProps.selectedIndustryId === this.props.selectedIndustryId) return
-        if (nextProps.searchText === this.props.searchText) return
+        if (nextProps === this.props || nextState === this.state) return false
     }
     render() {
         const userId = localStorage.getItem(GC_USER_ID)
@@ -68,12 +67,14 @@ class ParameterList extends Component {
                     updateParameter={this._handleUpdateParameter}/>
             ))
         }
-        const RowAddNewParameter = () => {
-            return(
-                <tbody id='parameterstable-tr'>
-                <tr>
-                    <td id='parameterstable-th-td'>#</td>
-                    <td id='parameterstable-th-td'>
+        return (
+            <div>
+                <table className='mt2 center' id='parameterstable'>
+                    <RowHeader />
+                    <RowsParameterArrayMap />
+                    <tr id='parameterstable-tr'>
+                        <td id='parameterstable-th-td'>#</td>
+                        <td id='parameterstable-th-td'>
                                 <span className='parameterinputsidetext nowrap mr5'>
                                     <span>{'{{'}</span>
                                         <input
@@ -84,30 +85,21 @@ class ParameterList extends Component {
                                         type='text'/>
                                         <span>{'}}'}</span>
                                 </span>
-                    </td>
-                    <td id='parameterstable-th-td'>
-                        <input
-                            className='pa1 br3 b--solid-ns b--black-40'
-                            onChange={(e) => this.setState({ newResponse: e.target.value })}
-                            value={this.state.newResponse}
-                            placeholder='Your New Response...'
-                            type='text'/>
-                    </td>
-                    <td id='parameterstable-th-td'>
-                        <button
-                            className='bg-green b--dark-green br3 pr2 pl2 pb1 pt1 white-90 fw8'
-                            onClick={() => {this._handleNewParameter()}}>Submit</button>
-                    </td>
-                </tr>
-                </tbody>
-            )
-        }
-        return (
-            <div>
-                <table className='mt2 center' id='parameterstable'>
-                    <RowHeader />
-                    <RowsParameterArrayMap />
-                    <RowAddNewParameter />
+                        </td>
+                        <td id='parameterstable-th-td'>
+                            <input
+                                className='pa1 br3 b--solid-ns b--black-40'
+                                onChange={(e) => this.setState({ newResponse: e.target.value })}
+                                value={this.state.newResponse}
+                                placeholder='Your New Response...'
+                                type='text'/>
+                        </td>
+                        <td id='parameterstable-th-td'>
+                            <button
+                                className='bg-green b--dark-green br3 pr2 pl2 pb1 pt1 white-90 fw8'
+                                onClick={() => {this._handleNewParameter()}}>Submit</button>
+                        </td>
+                    </tr>
                 </table>
             </div>
         )

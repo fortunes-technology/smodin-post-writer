@@ -11,8 +11,17 @@ This platform was built using
 - ReachJS (Frontend)
 
 ## Feature List
+- Choose from multiple Industries with pre-populated Social Posts and Parameters
+- Add your own Social Posts and Parameters
+- User Interface designed to easily identify parameters, responses, and versatility
+- Change some settings menu options
+- Search for your posts with ease
+- Easy to reference/find Social Post ideas, Social Post Examples, and Parameters
 
 ## Future Features in Progress
-
+- Post to your social Media
+- Schedule out your posts
+- Add images to posts
+- And much more!
 
 Copywrite  OTA AI, Inc. 2017

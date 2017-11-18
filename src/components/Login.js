@@ -57,6 +57,14 @@ class Login extends Component {
                         {this.state.login ? 'need to create an account?' : 'already have an account?'}
                     </div>
                 </div>
+                <div className='flex mt3'>
+                    <div
+                        className='pointer button'
+                        onClick={async (e) => {await this.setState({email: 'guest@ota.ai', password: 'password'});this._confirm()}}
+                    >
+                        Login As Guest
+                    </div>
+                </div>
             </div>
         )
     }

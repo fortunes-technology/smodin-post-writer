@@ -14,3 +14,7 @@ edit file: go to node_modules/react-scripts/scripts/start.js and change port fro
 
 ***Updating when Git Repo Updates***
 https://www.digitalocean.com/community/tutorials/how-to-set-up-automatic-deployment-with-git-with-a-vps
+
+***Updating Git Repo Manually***
+use command `git pull`
+If made local change that don't want to commit, `git reset --hard` then `git pull`
